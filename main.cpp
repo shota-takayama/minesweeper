@@ -1,7 +1,5 @@
 #include "minesweeper.hpp"
 
-
-
 int main(int argc, char* argv[]) {
 	
 	int height = argc == 4 ? atoi(argv[1]) : 10;
