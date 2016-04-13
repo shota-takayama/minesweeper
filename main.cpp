@@ -1,17 +1,6 @@
 #include "minesweeper.hpp"
 
-void get_point(char msg[], int *pt, int threshold) {
-	char str[8] = {};
-	while(1) {
-		printf("%s", msg);
-		scanf("%s", str);
-		if(sscanf(str, "%d", pt) == 1) {
-			if(*pt >= 0 && *pt < threshold) {
-				break;
-			}
-		}
-	}
-}
+
 
 int main(int argc, char* argv[]) {
 	
@@ -29,8 +18,8 @@ int main(int argc, char* argv[]) {
 	while(1) {
 		printf("\n");
 		mine.print_matrix();
-		get_point((char *)"  input point y: ", &pt_y, height);
-		get_point((char *)"  input point x: ", &pt_x, width);
+		mine.get_point((char *)"  input point y: ", &pt_y, height);
+		mine.get_point((char *)"  input point x: ", &pt_x, width);
 		if(!mine.open(pt_y, pt_x)) {
 			printf("\x1b[31m\n  !!!failed!!!\n\x1b[39m");
 			mine.print_correct();
