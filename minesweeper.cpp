@@ -4,7 +4,7 @@
 Mine::Mine(int h, int w, int b) {
 	height = h;
 	width = w;
-	bomb = b;
+	bombs = b;
 	size = height * width;
 	matrix = (int **)malloc(sizeof(int *) * height);
 	map = (bool **)malloc(sizeof(bool *) * height);
@@ -24,7 +24,7 @@ Mine::~Mine() {
 }
 
 void Mine::start() {
-	printf("\n\x1b[37m  !!!size:%dx%d, bomb:%d start!!!\n\x1b[39m", height, width, bomb);
+	printf("\n\x1b[37m  !!!size:%dx%d, bombs:%d start!!!\n\x1b[39m", height, width, bombs);
 }
 
 void Mine::print_matrix() {
@@ -71,11 +71,11 @@ void Mine::print_correct() {
 }
 
 void Mine::get_point(char msg[], int *pt, int threshold) {
-	char str[8] = {};
 	while(1) {
+		char str[8] = {};
 		printf("%s(0 ~ %d)  ", msg, threshold - 1);
 		scanf("%s", str);
-		if(sscanf(str, "%d", pt) == 1) {
+		if(is_number(str) && sscanf(str, "%d", pt) == 1) {
 			if(*pt >= 0 && *pt < threshold) {
 				break;
 			}
@@ -92,11 +92,12 @@ bool Mine::open(int y, int x) {
 		for(int j = -1; j <= 1; j++) {
 			for(int i = -1; i <= 1; i++) {
 				int _y = y + j, _x = x + i;
-				if(_y >= 0 && _x >= 0 && _y < height && _x < width) {
-					if(!map[_y][_x] && matrix[_y][_x] != -1) {
-						map[_y][_x] = true;
-						open(_y, _x);
-					}
+				if(_y < 0 || _x < 0 || _y >= height || _x >= width) {
+					continue;
+				}
+				else if(!map[_y][_x] && matrix[_y][_x] != -1) {
+					map[_y][_x] = true;
+					open(_y, _x);
 				}
 			}
 		}
@@ -108,7 +109,7 @@ bool Mine::open(int y, int x) {
 	}
 }
 
-bool Mine::clear() {
+bool Mine::is_clear() {
 	int count = 0;
 	for(int y = 0; y < height; y++) {
 		for(int x = 0; x < width; x++) {
@@ -118,7 +119,7 @@ bool Mine::clear() {
 		}
 	}
 
-	if(count == bomb) {
+	if(count == bombs) {
 		return true;
 	}
 	else {
@@ -127,10 +128,9 @@ bool Mine::clear() {
 }
 
 void Mine::create_check_array(bool *check) {
-	int *random = 2 * bomb < size ? (int *)malloc(sizeof(int) * bomb) : (int *)malloc(sizeof(int) * (size - bomb));
-	int small = 2 * bomb < size ? bomb : size - bomb;
-	bool b_val = 2 * bomb < size ? true : false;
-	for(int _b = 0; _b < small; _b++) {
+	int _bombs = 2 * bombs < size ? bombs : size - bombs;
+	int *random = (int *)malloc(sizeof(int) * _bombs);
+	for(int _b = 0; _b < _bombs; _b++) {
 		while(1) {
 			int val = rand() % size;
 			if(!check[val]) {
@@ -140,9 +140,9 @@ void Mine::create_check_array(bool *check) {
 			}			
 		}
 	}
-	if(!b_val) {
+	if(_bombs != bombs) {
 		for(int i = 0; i < size; i++) {
-			check[i] = (!check[i]);
+			check[i] = !check[i];
 		}
 	}
 	free(random);
@@ -168,7 +168,10 @@ void Mine::create_matrix_and_map(bool *check) {
 				for(int j = -1; j <= 1; j++) {
 					for(int i = -1; i <= 1; i++) {
 						int _y = y + j, _x = x + i;
-						if(_y >= 0 && _x >= 0 && _y < height && _x < width && matrix[_y][_x] == -1) {
+						if(_y < 0 || _x < 0 || _y >= height || _x >= width) {
+							continue;
+						}
+						else if(matrix[_y][_x] == -1) {
 							count++;
 						}
 					}
@@ -177,4 +180,14 @@ void Mine::create_matrix_and_map(bool *check) {
 			}
 		}
 	}
+}
+
+bool Mine::is_number(char str[]) {
+	for(int i = 0; str[i]; i++) {
+		if(str[i] < '0' || str[i] > '9') {
+			return false;
+		}
+	}
+
+	return true;
 }
