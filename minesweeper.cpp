@@ -95,7 +95,7 @@ bool Mine::open(int y, int x) {
 				if(_y < 0 || _x < 0 || _y >= height || _x >= width) {
 					continue;
 				}
-				else if(!map[_y][_x] && matrix[_y][_x] != -1) {
+				else if(!map[_y][_x]) {
 					map[_y][_x] = true;
 					open(_y, _x);
 				}
