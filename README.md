@@ -14,4 +14,4 @@ mine <height> <width> <bombs>
 
 # Screenshot
 
-![screenshot](https://raw.githubusercontent.com/shota-takayama/minesweeper/image/image/demo_image.png)
+<img src="https://raw.githubusercontent.com/shota-takayama/minesweeper/image/image/demo_image.png" width=300>
